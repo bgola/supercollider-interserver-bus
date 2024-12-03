@@ -43,6 +43,7 @@ function(sc_add_server_plugin_properties target is_supernova)
         ${SC_PATH}/include/plugin_interface
         ${SC_PATH}/include/common
         ${SC_PATH}/common
+	${SC_PATH}/external_libraries/boost
     )
 
     # from CompilerConfig module
