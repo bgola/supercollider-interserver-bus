@@ -73,7 +73,6 @@ find_package(PkgConfig)
 set(ISBus_cpp_files
     plugins/ISBus/ISBus.cpp
     plugins/ISBus/ISBus.hpp
-    plugins/ISBus/SharedMemoryRingBuffer.h
 )
 set(ISBus_sc_files
     plugins/ISBus/ISBus.sc
