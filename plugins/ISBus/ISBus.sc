@@ -91,7 +91,9 @@ ISNdef {
 		fork {
 			// Wait some random time because sometimes if booting multiple servers simultaneously
 			// something weird happens with sclang. not sure what.
-			5.rand.wait;
+			if (server.hasBooted.not) {
+				5.0.rand.wait;
+			};
 			server.waitForBoot {
 				if (object.notNil) {
 					sdef = Ndef(key -> serverName);
