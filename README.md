@@ -1,8 +1,28 @@
 # supercollider-interserver-bus
 
-This is a work in progress.
+This is a work in progress. And needless to say, very experimental.
 
 ## Example
+
+New version with ISNdef, a convinience to create an ndef on a special blockSize=1 server and mirroring its parameters in a local ndef:
+```supercollider
+(
+ISNdef(\xfm, { arg freqA = 32, freqB = 9, modAtoB=540, modBtoA=240;
+	var fbIn = LocalIn.ar(2);
+	var sigs = SinOsc.ar([freqA, freqB] + (fbIn.reverse * [modBtoA, modAtoB]));
+	LocalOut.ar(sigs);
+	sigs*0.5;
+});
+)
+(
+ISNdef(\xfm).addSpec(\freqA, [0.01, 20000, \exp]);
+ISNdef(\xfm).addSpec(\freqB, [0.01, 20000, \exp]);
+ISNdef(\xfm).addSpec(\modAtoB, [0,1000]);
+ISNdef(\xfm).addSpec(\modBtoA, [0,1000]);
+)
+```
+
+Or a more general using the ISOut, ISIn and ISBus:
 
 A crossfeedback FM (from https://scsynth.org/t/cybernetic-music-with-supercollider/3184/3) running on a server with `blockSize = 1` and sending its signal via `ISBus`.
 
