@@ -2,6 +2,8 @@
 
 This is a work in progress. And needless to say, very experimental.
 
+This plugin provides two UGens: `ISIn.ar` and `ISOut.ar`. Together with `ISBus` you can write and read from busses that are in shared memory, allowing multiple `scsynth` servers running on the same machine to send audio signals to each other.
+
 ## Example
 
 New version with ISNdef, a convinience to create an ndef on a special blockSize=1 server and mirroring its parameters in a local ndef:
