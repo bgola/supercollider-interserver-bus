@@ -1,17 +1,22 @@
-// New version with ISNdef, a convinience to create an ndef on a special blockSize=1 server and mirrors the local ndef:
+// New version with ISNdef, a convinience to create an ndef on a custom blockSize
+// server and mirrors the local ndef:
 
 (
-ISNdef(\xfm, { arg freqA = 32, freqB = 9, modAtoB=540, modBtoA=240, delayedSamples;
+ISNdef(\xfm, { arg freqA = 32, freqB = 9, modAtoB=540, modBtoA=240;
 	var fbIn = LocalIn.ar(2);
 	var sigs = SinOsc.ar([freqA, freqB] + (fbIn.reverse * [modBtoA, modAtoB]));
 	LocalOut.ar(sigs);
 	sigs*0.5;
-});
+}, \singleSample, 1, 512);
+)
+
+(
 ISNdef(\xfm).addSpec(\freqA, [0.01, 20000, \exp]);
 ISNdef(\xfm).addSpec(\freqB, [0.01, 20000, \exp]);
 ISNdef(\xfm).addSpec(\modAtoB, [0,1000]);
 ISNdef(\xfm).addSpec(\modBtoA, [0,1000]);
 )
+
 
 // inspect the local ndef
 ISNdef(\xfm).ndef.gui;
@@ -27,10 +32,12 @@ ISNdef(\reuse).sdef.gui;
 
 
 
-/* OLD EXAMPLE WITHOUT ISBus and ISNdef */
+
+// more general way
 
 (
 s.waitForBoot {
+	b = ISBus.audio();
 	z = Server.new(\singleSample, NetAddr("127.0.0.1", 57140));
 	z.options.blockSize = 1;
 	z.waitForBoot {
@@ -50,11 +57,11 @@ s.waitForBoot {
 					Delay2.ar(sigs)
 				]);
 			);
-			ISOut.ar(0, sigs * 0.5);
+			ISOut.ar(b, sigs * 0.5);
 		}).gui;
 
 		Ndef(\listen, {
-			ISIn.ar(0, 2);
+			ISIn.ar(b, 2);
 		}).play;
 	}
 };

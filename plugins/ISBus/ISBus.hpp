@@ -23,6 +23,7 @@ struct RingBuffer {
 typedef struct _BusData {
     RingBuffer* ringBuffer;
     boost::interprocess::managed_shared_memory* segment;
+    int bufferSize;
 } ISBusData;
 
 
