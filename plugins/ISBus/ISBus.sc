@@ -119,11 +119,11 @@ ISNdef {
 			server = Server(serverName, NetAddr("127.0.0.1", 54000 + portoffset));
 			server.options.blockSize = blockSize;
 		};
+		ndef = Ndef(key);
+		sdef = Ndef(key -> serverName);
 		if (source.notNil) {
 			this.source_(source);
 		};
-		sdef = Ndef(key -> serverName);
-		ndef = Ndef(key);
 	}
 
 	addSpec { arg key, value;
