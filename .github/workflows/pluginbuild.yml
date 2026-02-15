@@ -44,7 +44,7 @@ jobs:
       with:
         repository: supercollider/supercollider
         path: ${{ env.SC_PATH }}
-        ref: main
+        ref: 'Version-3.14.1'
 
       # Build
     - name: Create Build Environment
