@@ -85,7 +85,7 @@ set(ISBus_schelp_files
 )
 
 sc_add_server_plugin(
-    "ISBus/ISBus" # desination directory
+    "ISBus" # desination directory
     "ISBus" # target name
     "${ISBus_cpp_files}"
     "${ISBus_sc_files}"
