@@ -52,28 +52,23 @@ ISOut : AbstractOut {
 
 ISBus {
 	classvar <allocator;
-	var <rate, <busnum=nil, <bufferSize;
+	var <busnum=nil, <bufferSize;
 
 	*initClass {
 		allocator = ContiguousBlockAllocator.new(2048);
 	}
 
-	*new { arg rate, bufferSize=4096, busnum=nil;
-		if ([\control, \audio].includes(rate).not) {
-			"rate should be \control or \audio".warn;
-			^nil;
-		};
-
+	*new { arg bufferSize=4096, busnum=nil;
 		if (busnum.isNil) {
 			busnum = ISBus.allocator.alloc(1);
 		} {
 			ISBus.allocator.reserve(busnum, 1);
 		}
-		^super.newCopyArgs(rate, busnum, bufferSize);
+		^super.newCopyArgs(busnum, bufferSize);
 	}
 
 	*audio { arg bufferSize=4096, busnum=nil;
-		^ISBus.new(\audio, bufferSize, busnum);
+		^ISBus.new(bufferSize, busnum);
 	}
 }
 
@@ -155,7 +150,7 @@ ISNdef {
 			// Wait some random time because sometimes if booting multiple servers simultaneously
 			// something weird happens with sclang. not sure what.
 			if (server.hasBooted.not) {
-				5.0.rand.wait;
+				2.0.rand.wait;
 			};
 			server.waitForBoot {
 				if (source.notNil) {

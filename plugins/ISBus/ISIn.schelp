@@ -1,0 +1,36 @@
+class:: ISIn
+summary:: Read an ISBus for interserver communication
+categories:: UGens
+related:: Classes/ISBus, Classes/ISOut, Classes/ISNdef
+
+description::
+ISIn.ar reads audio signals from an ISBus.
+
+classmethods::
+
+method::ar
+argument::bus
+The ISBus busnum / the ISBus object.
+
+argument::numChannels
+The number of channels to read from the ISBus.
+
+examples::
+
+code::
+(
+// boot the default server
+s.waitForBoot {
+	b = ISBus.audio(4096);
+	// plays to the ISBus from the default server
+	{ISOut.ar(b, SinOsc.ar(300)*0.4)}.play;
+
+	// boot a new server
+	z = Server.new(\newServer, NetAddr("127.0.0.1", 57222));
+	z.waitForBoot {
+		// read from ISBus and play from the new server
+		{ISIn.ar(b)}.play(z);
+	};
+};
+)
+::

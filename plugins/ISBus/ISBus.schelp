@@ -1,20 +1,50 @@
-class:: ISIn
-summary:: Interserver Bus Input
-categories:: UGens
+class:: ISBus
+summary:: A Bus for sharing audio between different scsynth servers using SHM
+categories:: InterServer Bus
+related:: Classes/ISIn, Classes/ISOut, Classes/ISNdef
 
 description::
+Clientside representation of a InterServer Bus, a shared memory ringbuffer that allows to send and receive audio between different scsynth servers.
 
 classmethods::
 
-method::ar, kr
+method::audio
+Allocates a new ISBus
 
-argument::TODO
+argument::bufferSize
+The size of the ringbuffer. This should be at least double the operating system's/hardware buffer size to avoid glitches.
 
-argument::TODO
+argument::busnum
+By default the busnum allocation is handled by the ISBus class, but you can define a specific busnum if you desire.
+
+
+method::new
+Allocates a new ISBus
+
+argument::bufferSize
+The size of the ringbuffer. This should be at least double the operating system's/hardware buffer size to avoid glitches.
+
+argument::busnum
+By default the busnum allocation is handled by the ISBus class, but you can define a specific busnum if you desire.
 
 
 examples::
 
 code::
+(
+// boot the default server
+s.waitForBoot {
+	b = ISBus.audio(4096);
+	// plays to the ISBus from the default server
+	{ISOut.ar(b, SinOsc.ar(300)*0.4)}.play;
 
+	// boot a new server
+	z = Server.new(\newServer, NetAddr("127.0.0.1", 57222));
+	z.waitForBoot {
+		// read from ISBus and play from the new server
+		{ISIn.ar(b)}.play(z);
+	};
+};
+)
 ::
+

@@ -79,6 +79,9 @@ set(ISBus_sc_files
 )
 set(ISBus_schelp_files
     plugins/ISBus/ISBus.schelp
+    plugins/ISBus/ISIn.schelp
+    plugins/ISBus/ISOut.schelp
+    plugins/ISBus/ISNdef.schelp
 )
 
 sc_add_server_plugin(

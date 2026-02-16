@@ -1,0 +1,74 @@
+class:: ISNdef
+summary:: Convinience class for creating InterServer Proxies
+categories:: InterServer Bus, Live Coding
+related:: Classes/ISBus, Classes/ISOut, Classes/ISIn, Classes/Ndef
+
+description::
+
+The ISNdef object provides a way to create an Ndef on a different server with its own blockSize and mirrors the controls an Ndef in the default server, sending the audio using an ISBus.
+
+classmethods::
+
+method::new
+
+argument::key
+the name of the proxy (usually a symbol). If only the key is given and no object, it returns the proxy object.
+
+argument::source
+the Ndef source
+
+argument::serverName
+You can specify a serverName and if that server already exsits ISNdef will use it, otherwise it will boot its own server.
+
+argument::blockSize
+The blockSize option for when creating a new server.
+
+argument::bufferSize
+The bufferSize for the ISBus.
+
+
+examples::
+code::
+s.boot;
+
+ISNdef(\xfm, { arg freqA = 32, freqB = 9, modAtoB=540, modBtoA=240;
+	var fbIn = LocalIn.ar(2);
+	var sigs = SinOsc.ar([freqA, freqB] + (fbIn.reverse * [modBtoA, modAtoB]));
+	LocalOut.ar(sigs);
+	sigs*0.5;
+}, blockSize: 1);
+
+ISNdef(\xfm).addSpec(\freqA, [0.01, 20000, \exp]);
+ISNdef(\xfm).addSpec(\freqB, [0.01, 20000, \exp]);
+ISNdef(\xfm).addSpec(\modAtoB, [0,1000]);
+ISNdef(\xfm).addSpec(\modBtoA, [0,1000]);
+
+// this gets created automatically
+Ndef(\xfm).gui;
+
+
+// Using an existing server
+
+// Copy the default options and set blockSize to 1
+o = s.options.copy;
+o.blockSize = 1;
+
+// new serverName is \z
+z = Server(\z, NetAddr("127.0.0.1", 57122), o);
+z.boot;
+
+// notice that now the ISNdef will not create a new server but use the \z server we just booted
+ISNdef(\xfmz, { arg freqA = 32, freqB = 9, modAtoB=540, modBtoA=240;
+	var fbIn = LocalIn.ar(2);
+	var sigs = SinOsc.ar([freqA, freqB] + (fbIn.reverse * [modBtoA, modAtoB]));
+	LocalOut.ar(sigs);
+	sigs*0.5;
+}, severName: \z, blockSize: 1);
+
+ISNdef(\xfmz).addSpec(\freqA, [0.01, 20000, \exp]);
+ISNdef(\xfmz).addSpec(\freqB, [0.01, 20000, \exp]);
+ISNdef(\xfmz).addSpec(\modAtoB, [0,1000]);
+ISNdef(\xfmz).addSpec(\modBtoA, [0,1000]);
+::
+
+

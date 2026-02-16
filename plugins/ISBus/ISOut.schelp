@@ -1,0 +1,36 @@
+class:: ISOut
+summary:: Writes to an ISBus for interserver communication
+categories:: UGens
+related:: Classes/ISBus, Classes/ISIn, Classes/ISNdef
+
+description::
+ISOut.ar writes audio signals to an ISBus.
+
+classmethods::
+
+method::ar
+argument::bus
+The ISBus busnum / the ISBus object.
+
+argument::channelsArray
+An Array of channels or single output to write out.
+
+examples::
+
+code::
+(
+// boot the default server
+s.waitForBoot {
+	b = ISBus.audio(4096);
+	// plays to the ISBus from the default server
+	{ISOut.ar(b, [SinOsc.ar(300), Saw.ar(400)]*0.4)}.play;
+
+	// boot a new server
+	z = Server.new(\newServer, NetAddr("127.0.0.1", 57222));
+	z.waitForBoot {
+		// read from ISBus and play from the new server
+		{ISIn.ar(b, 2)}.play(z);
+	};
+};
+)
+::
