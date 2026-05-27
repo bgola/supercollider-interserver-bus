@@ -111,7 +111,7 @@ ISNdef {
 			while { Server.all.asList.collect {|s| s.addr.port }.includes(54000 + portoffset) } {
 				portoffset = 1000.rand;
 			};
-			server = Server(serverName, NetAddr("127.0.0.1", 54000 + portoffset));
+			server = Server(serverName, NetAddr("127.0.0.1", 54000 + portoffset), Server.default.options.copy);
 			server.options.blockSize = blockSize;
 		};
 		ndef = Ndef(key);
@@ -127,17 +127,29 @@ ISNdef {
 	}
 
 	source_ { arg object;
+		var ctls;
 		source = object;
 		if (initialized.not) {
 			this.bootAndCreateNdefs;
 		};
 		sdef[0] = source;
+
 		numChannels = sdef.numChannels;
-		ndef.source = {ISIn.ar(isbus, numChannels)};
-		// add control keys to local ndef
-		sdef.controlKeys.reject {|key| key == \wet99}.do {|k|
-			ndef.set(k, sdef.get(k));
+
+		ctls = sdef.controlKeys.reject {|key| key == \wet99}.collect {|k|
+			[k, sdef.get(k)];
 		};
+		ndef.source = {
+			// add control keys to local ndef as .kr to keep order of parameters consistent
+			ctls.do {|keyVal|
+				var key = keyVal[0];
+				var val = keyVal[1];
+				key.kr(val);
+			};
+			ISIn.ar(isbus, numChannels)
+		};
+
+
 
 		sdef.getSpec.keysValuesDo {|k,v|
 			ndef.addSpec(k, v);
@@ -154,7 +166,7 @@ ISNdef {
 			};
 			server.waitForBoot {
 				if (source.notNil) {
-					sdef[99] = \filter -> {arg in; ISOut.ar(isbus, in) };
+					sdef[99] = \filter -> {arg in; ISOut.ar(isbus, in); in };
 
 					this.source_(source);
 					// keep syncing both, including specs
@@ -162,10 +174,9 @@ ISNdef {
 						ndef.controlKeys.reject {|key| key == \wet99}.do {|k|
 							sdef.set(k, ndef.get(k));
 						};
-					}, (1/20)).play;
+					}, 1/30).play;
 				};
 			};
 		};
 	}
 }
-
